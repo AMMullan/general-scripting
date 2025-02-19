@@ -1,0 +1,6 @@
+{
+    "required_positions": {},
+    "forbidden_positions": {"l": [1, 2, 3], "a": [1, 3, 4]},
+    "include_letters": ["l", "a"],
+    "excluded_letters": ["e", "s", "t", "r", "o", "p"]
+}

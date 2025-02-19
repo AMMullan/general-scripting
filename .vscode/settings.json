@@ -1,0 +1,75 @@
+{
+    "editor.detectIndentation": false,
+    "editor.guides.bracketPairs": true,
+    "editor.renderWhitespace": "all",
+    "editor.stickyScroll.enabled": true,
+    "editor.tabSize": 4,
+    "editor.copyWithSyntaxHighlighting": false,
+    "editor.emptySelectionClipboard": true,
+    "editor.hover.enabled": true,
+    "editor.multiCursorModifier": "ctrlCmd",
+    "editor.renderLineHighlight": "all",
+
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.venv": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true
+    },
+
+    "[json]": {
+        "editor.formatOnSave": false,
+        "editor.tabSize": 4
+    },
+
+    "[terraform]": {
+        "editor.defaultFormatter": "gamunu.opentofu",
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+    },
+
+    "[terraform-vars]": {
+        "editor.defaultFormatter": "gamunu.opentofu",
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+    },
+
+    "[python]": {
+        "editor.autoIndent": "advanced",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            // "source.organizeImports": "explicit"
+            "source.organizeImports.ruff": "explicit"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.defaultFoldingRangeProvider": "charliermarsh.ruff",
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.formatOnType": true,
+        "editor.rulers": [
+            {
+                "color": "#ff9900",
+                "column": 88
+            },
+            {
+                "color": "#FF0D00",
+                "column": 100
+            }
+        ],
+    },
+
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "python.languageServer": "Pylance",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": false,
+}
