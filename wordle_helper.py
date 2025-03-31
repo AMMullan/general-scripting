@@ -5,16 +5,25 @@
 # ]
 # ///
 
+import argparse
 import asyncio
 import json
 from collections import Counter
 from datetime import datetime
+from pathlib import Path
 
 import httpx
 import nltk
 from nltk.corpus import words
 
 TODAY_YMD = datetime.now().strftime('%Y-%m-%d')
+
+
+def existing_file(path_str: str) -> Path:
+    path = Path(path_str)
+    if not path.is_file():
+        raise argparse.ArgumentTypeError(f'File does not exist: {path}')
+    return path
 
 
 async def get_today():
@@ -105,7 +114,24 @@ def retrieve_word_list():
 
 
 def main():
-    game_config = json.load(open('wordle_game_config.json', 'r'))
+    args = argparse.ArgumentParser(description='Wordle Helper')
+    args.add_argument(
+        '-c',
+        '--config',
+        type=existing_file,
+        default='wordle_game.json',
+        help='Path to the game configuration file.',
+    )
+    args.add_argument(
+        '-a', '--answer', action='store_true', help='Get the answer for today.'
+    )
+    config = args.parse_args()
+
+    if config.answer:
+        asyncio.run(get_today())
+        return
+
+    game_config = json.load(open(config.config, 'r'))
     word_list = retrieve_word_list()
 
     correct_positions = game_config.get('correct_positions', {})
@@ -124,10 +150,6 @@ def main():
     print(f'Possible Words ({len(valid_words)}):')
     for word in valid_words:
         print(f'- {word.upper()}')
-
-    want_answer = input('\nWant Todays Word? [Y|n] (default: n): ')
-    if want_answer == 'Y':
-        asyncio.run(get_today())
 
 
 if __name__ == '__main__':
