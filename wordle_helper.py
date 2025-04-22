@@ -119,7 +119,7 @@ def main():
         '-c',
         '--config',
         type=existing_file,
-        default='wordle_game.json',
+        default=f'{Path(__file__).stem}.json',
         help='Path to the game configuration file.',
     )
     args.add_argument(
