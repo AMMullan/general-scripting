@@ -131,7 +131,12 @@ def main():
         asyncio.run(get_today())
         return
 
-    game_config = json.load(open(config.config, 'r'))
+    try:
+        game_config = json.load(open(config.config, 'r'))
+    except json.decoder.JSONDecodeError as e:
+        print(f'Error reading JSON file: {e}')
+        return
+
     word_list = retrieve_word_list()
 
     correct_positions = game_config.get('correct_positions', {})
