@@ -113,7 +113,7 @@ def retrieve_word_list():
         return sorted([word for word in words.words() if len(word) == 5])
 
 
-def main():
+def get_args() -> argparse.Namespace:
     args = argparse.ArgumentParser(description='Wordle Helper')
     args.add_argument(
         '-c',
@@ -123,9 +123,19 @@ def main():
         help='Path to the game configuration file.',
     )
     args.add_argument(
+        '-e',
+        '--exclude-file',
+        type=existing_file,
+        help='Path to the excluded letters file.',
+    )
+    args.add_argument(
         '-a', '--answer', action='store_true', help='Get the answer for today.'
     )
-    config = args.parse_args()
+    return args.parse_args()
+
+
+def main():
+    config = get_args()
 
     if config.answer:
         asyncio.run(get_today())
@@ -152,6 +162,11 @@ def main():
         excluded_letters=game_config.get('excluded_letters', []),
         required_letter_counts=game_config.get('required_letter_counts', {}),
     )
+    if config.exclude_file:
+        with open(config.exclude_file, 'r') as f:
+            excluded_words = [line.strip().lower() for line in f.readlines()]
+            valid_words = [word for word in valid_words if word not in excluded_words]
+
     print(f'Possible Words ({len(valid_words)}):')
     for word in valid_words:
         print(f'- {word.upper()}')
