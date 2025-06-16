@@ -79,7 +79,7 @@ def check_possible_words(
                 if word[positions - 1] != letter:
                     return False
             elif isinstance(positions, list):
-                if all(word[pos - 1] != letter for pos in positions):
+                if any(word[pos - 1] != letter for pos in positions):
                     return False
 
         # Check forbidden positions
