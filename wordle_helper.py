@@ -1,6 +1,5 @@
 # /// script
 # dependencies = [
-#   "nltk",
 #   "httpx",
 # ]
 # ///
@@ -13,10 +12,12 @@ from datetime import datetime
 from pathlib import Path
 
 import httpx
-import nltk
-from nltk.corpus import words
 
 TODAY_YMD = datetime.now().strftime('%Y-%m-%d')
+
+# From https://gist.github.com/dracos/dd0668f281e685bad51479e5acaadb93#file-valid-wordle-words-txt
+ALL_WORDS_PATH = Path(__file__).parent / 'wordle_valid_answers.txt'
+DONE_WORDS_PATH = Path(__file__).parent / 'wordle_previous_answers.txt'
 
 
 def existing_file(path_str: str) -> Path:
@@ -37,11 +38,10 @@ async def get_today():
 
 
 def check_possible_words(
-    word_list: list[str],
+    word_list: set[str],
     correct_positions: dict[str, int | list[int]],
     incorrect_positions: dict[str, int | list[int]],
-    include_letters: list[str],
-    excluded_letters: list[str],
+    excluded_letters: set[str],
     required_letter_counts: dict[str, int],
 ) -> list[str]:
     """
@@ -58,8 +58,21 @@ def check_possible_words(
         list[str]: List of words that match the criteria.
     """
 
+    correct_positions = {
+        letter.upper(): positions for letter, positions in correct_positions.items()
+    }
+    incorrect_positions = {
+        letter.upper(): positions for letter, positions in incorrect_positions.items()
+    }
+    include_letters = list(incorrect_positions.keys()) + list(correct_positions.keys())
+    excluded_letters = {letter.upper() for letter in excluded_letters}
+
+    required_letter_counts = {
+        letter.upper(): count for letter, count in required_letter_counts.items()
+    }
+
     def is_valid_word(word: str) -> bool:
-        if len(word) != 5 or not word.islower():
+        if len(word) != 5:
             return False
 
         if any(letter in word for letter in excluded_letters):
@@ -96,23 +109,6 @@ def check_possible_words(
     return sorted(word for word in word_list if is_valid_word(word))
 
 
-def retrieve_word_list():
-    """
-    Retrieves the list of valid words from a remote source or falls back to NLTK.
-    """
-    try:
-        httpx_client = httpx.Client(follow_redirects=True)
-        req = httpx_client.get(
-            'https://gist.github.com/dracos/dd0668f281e685bad51479e5acaadb93/raw/6bfa15d263d6d5b63840a8e5b64e04b382fdb079/valid-wordle-words.txt',
-        )
-        req.raise_for_status()
-        return list(req.text.splitlines())
-    except httpx.HTTPStatusError:
-        print('Reverting to NLTK Word List...')
-        nltk.download('words', quiet=True)
-        return sorted([word for word in words.words() if len(word) == 5])
-
-
 def get_args() -> argparse.Namespace:
     args = argparse.ArgumentParser(description='Wordle Helper')
     args.add_argument(
@@ -126,6 +122,7 @@ def get_args() -> argparse.Namespace:
         '-e',
         '--exclude-file',
         type=existing_file,
+        default=DONE_WORDS_PATH.resolve(),
         help='Path to the excluded letters file.',
     )
     args.add_argument(
@@ -147,25 +144,22 @@ def main():
         print(f'Error reading JSON file: {e}')
         return
 
-    word_list = retrieve_word_list()
-
-    correct_positions = game_config.get('correct_positions', {})
-    incorrect_positions = game_config.get('incorrect_positions', {})
-
-    include_letters = list(incorrect_positions.keys()) + list(correct_positions.keys())
+    valid_word_list = {word.strip() for word in ALL_WORDS_PATH.open('r').readlines()}
 
     valid_words = check_possible_words(
-        word_list,
-        correct_positions=correct_positions,
-        incorrect_positions=incorrect_positions,
-        include_letters=include_letters,
-        excluded_letters=game_config.get('excluded_letters', []),
+        valid_word_list,
+        correct_positions=game_config.get('correct_positions', {}),
+        incorrect_positions=game_config.get('incorrect_positions', {}),
+        excluded_letters=set(game_config.get('excluded_letters', [])),
         required_letter_counts=game_config.get('required_letter_counts', {}),
     )
     if config.exclude_file:
         with open(config.exclude_file, 'r') as f:
-            excluded_words = [line.strip().lower() for line in f.readlines()]
-            valid_words = [word for word in valid_words if word not in excluded_words]
+            excluded_words = {line.strip().upper() for line in f.readlines()}
+            print(excluded_words)
+            valid_words = sorted(
+                word for word in valid_words if word not in excluded_words
+            )
 
     print(f'Possible Words ({len(valid_words)}):')
     for word in valid_words:
