@@ -156,7 +156,6 @@ def main():
     if config.exclude_file:
         with open(config.exclude_file, 'r') as f:
             excluded_words = {line.strip().upper() for line in f.readlines()}
-            print(excluded_words)
             valid_words = sorted(
                 word for word in valid_words if word not in excluded_words
             )
