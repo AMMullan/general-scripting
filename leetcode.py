@@ -3,8 +3,9 @@ import statistics
 
 
 class LeetCode:
+    # --- Problem 1: Two Sum ---
     def twoSum(self, nums: list[int], target: int) -> list[int]:
-        # LeetCode Problem 1: Two Sum
+        """LeetCode Problem 1: Two Sum"""
 
         num_to_index: dict[int, int] = {}
         for idx, num in enumerate(nums):
@@ -15,13 +16,15 @@ class LeetCode:
 
         return []
 
+    # --- Problem 4: Median of Two Sorted Arrays ---
     def findMedianSortedArrays(self, nums1: list[int], nums2: list[int]) -> float:
-        # LeetCode Problem 4: Median of Two Sorted Arrays
+        """LeetCode Problem 4: Median of Two Sorted Arrays"""
 
         return statistics.median(nums1 + nums2)
 
+    # --- Problem 5: Longest Palindromic Substring ---
     def longestPalindrome(self, s: str) -> str:
-        # LeetCode Problem 5: Longest Palindromic Substring
+        """LeetCode Problem 5: Longest Palindromic Substring"""
 
         def find_palindromes(input, j, k):
             palindromes = []
@@ -47,8 +50,9 @@ class LeetCode:
         except ValueError:
             return s[0]
 
+    # --- Problem 6: Zigzag Conversion ---
     def convert(self, s: str, numRows: int) -> str:
-        # LeetCode Problem 6: Zigzag Conversion
+        """LeetCode Problem 6: Zigzag Conversion"""
 
         if numRows == 1 or numRows >= len(s):
             return s
@@ -69,8 +73,9 @@ class LeetCode:
 
         return ''.join(rows)
 
+    # --- Problem 7: Reverse Integer ---
     def reverse(self, x: int) -> int:
-        # LeetCode Problem 7: Reverse Integer
+        """LeetCode Problem 7: Reverse Integer"""
 
         negative = x < 0
 
@@ -81,8 +86,9 @@ class LeetCode:
 
         return -reversed_input if negative else reversed_input
 
+    # --- Problem 8: String to Integer (atoi) ---
     def myAtoi(self, s: str) -> int:
-        # LeetCode Problem 8: String to Integer (atoi)
+        """LeetCode Problem 8: String to Integer (atoi)"""
 
         int_max = 2**31 - 1
         int_min = -(2**31)
@@ -110,20 +116,23 @@ class LeetCode:
 
         return int_max if result > int_max else max(result, int_min)
 
+    # --- Problem 9: Palindrome Number ---
     def isPalindrome(self, x: int) -> bool:
-        # LeetCode Problem 9: Palindrome Number
+        """LeetCode Problem 9: Palindrome Number"""
 
         return str(x) == str(x)[::-1]
 
+    # --- Problem 10: Regular Expression Matching ---
     def isMatch(self, s: str, p: str) -> bool:
-        # LeetCode Problem 10: Regular Expression Matching
+        """LeetCode Problem 10: Regular Expression Matching"""
 
         match = re.match(p, s)
 
         return match[0] == s if match else False
 
+    # --- Problem 12: Integer to Roman ---
     def intToRoman(self, num: int) -> str:
-        # LeetCode Problem 12: Integer to Roman
+        """LeetCode Problem 12: Integer to Roman"""
 
         m = ['', 'M', 'MM', 'MMM']
         c = ['', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM']
@@ -132,8 +141,57 @@ class LeetCode:
 
         return f'{m[num // 1000]}{c[(num % 1000) // 100]}{x[(num % 100) // 10]}{i[num % 10]}'
 
+    # --- Problem 13: Roman to Integer ---
+    def romanToInt(self, s: str) -> int:
+        """LeetCode Problem 13: Roman to Integer"""
+
+        roman_numerals = {
+            'I': 1,
+            'V': 5,
+            'X': 10,
+            'L': 50,
+            'C': 100,
+            'D': 500,
+            'M': 1000,
+        }
+
+        total = 0
+        prev_value = 0
+
+        for char in reversed(s):
+            char_worth = roman_numerals[char]
+            if char_worth < prev_value:
+                total -= char_worth
+            else:
+                total += char_worth
+
+            prev_value = char_worth
+
+        return total
+
+    # --- Problem 14: Longest Common Prefix ---
+    def longestCommonPrefix(self, strs: list[str]) -> str:
+        """LeetCode Problem 14: Longest Common Prefix"""
+
+        if not strs:
+            return ''
+
+        prefix = ''
+        first_split = tuple(strs[0])
+        for idx, s in enumerate(first_split):
+            try:
+                if all(s == other[idx] for other in strs[1:]):
+                    prefix += s
+                else:
+                    break
+            except IndexError:
+                break
+
+        return prefix
+
+    # --- Problem 26: Remove Duplicates from Sorted Array ---
     def removeDuplicates(self, nums: list[int | str]) -> int:
-        # LeetCode Problem 26: Remove Duplicates from Sorted Array
+        """LeetCode Problem 26: Remove Duplicates from Sorted Array"""
 
         list_length = len(nums)
         unique_values = sorted(set(nums))
@@ -144,37 +202,42 @@ class LeetCode:
 
         return len(unique_values)
 
+    # --- Problem 27: Remove Element ---
     def removeElement(self, nums: list[int], val: int) -> int:
-        # LeetCode Problem 27: Remove Element
+        """LeetCode Problem 27: Remove Element"""
 
         while nums.count(val) > 0:
             nums.remove(val)
 
         return len(nums)
 
+    # --- Problem 28: Find the Index of the First Occurrence in a String ---
     def strStr(self, haystack: str, needle: str) -> int:
-        # LeetCode Problem 28: Find the Index of the First Occurrence in a String
+        """LeetCode Problem 28: Find the Index of the First Occurrence in a String"""
 
         try:
             return haystack.index(needle)
         except ValueError:
             return -1
 
+    # --- Problem 33: Search in Rotated Sorted Array ---
     def search(self, nums: list[int], target: int) -> int:
-        # LeetCode Problem 33: Search in Rotated Sorted Array
+        """LeetCode Problem 33: Search in Rotated Sorted Array"""
 
         try:
             return tuple(nums).index(target)
         except ValueError:
             return -1
 
+    # --- Problem 153: Find Minimum in Rotated Sorted Array ---
     def findMin(self, nums: list[int]) -> int:
-        # LeetCode Problem 153: Find Minimum in Rotated Sorted Array
+        """LeetCode Problem 153: Find Minimum in Rotated Sorted Array"""
 
         return min(tuple(nums))
 
+    # --- Problem 217: Contains Duplicate ---
     def containsDuplicate(self, nums: list[int]) -> bool:
-        # LeetCode Problem 217: Contains Duplicate
+        """LeetCode Problem 217: Contains Duplicate"""
 
         return len(nums) != len(set(nums))
 
@@ -227,6 +290,18 @@ def run_leetcode_tests() -> None:
     assert lc.intToRoman(3749) == 'MMMDCCXLIX'
     assert lc.intToRoman(58) == 'LVIII'
     assert lc.intToRoman(1994) == 'MCMXCIV'
+
+    # Problem 13: Roman to Integer
+    assert lc.romanToInt('III') == 3
+    assert lc.romanToInt('IV') == 4
+    assert lc.romanToInt('IX') == 9
+    assert lc.romanToInt('LVIII') == 58
+    assert lc.romanToInt('MCMXCIV') == 1994
+
+    # Problem 14: Longest Common Prefix
+    assert lc.longestCommonPrefix(['flower', 'flow', 'flight']) == 'fl'
+    assert lc.longestCommonPrefix(['dog', 'racecar', 'car']) == ''
+    assert lc.longestCommonPrefix(['cir', 'car']) == 'c'
 
     # Problem 26: Remove Duplicates from Sorted Array
     assert lc.removeDuplicates([1, 1, 2]) == 2
