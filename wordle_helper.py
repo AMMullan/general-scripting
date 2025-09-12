@@ -128,11 +128,25 @@ def get_args() -> argparse.Namespace:
     args.add_argument(
         '-a', '--answer', action='store_true', help='Get the answer for today.'
     )
+    args.add_argument(
+        '-p', '--possible', action='store_true', help='Get Possible Words.'
+    )
     return args.parse_args()
 
 
 def main():
     config = get_args()
+
+    if config.possible:
+        all_words = tuple(word.strip() for word in ALL_WORDS_PATH.open('r').readlines())
+        done_words = tuple(
+            word.strip() for word in DONE_WORDS_PATH.open('r').readlines()
+        )
+
+        for word in all_words:
+            if word not in done_words:
+                print(f'- {word}')
+        return
 
     if config.answer:
         asyncio.run(get_today())
